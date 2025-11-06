@@ -3,14 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello</title>
+    <title>Canvas</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body onload="init_Canvas()">
     <h1>Interactive Canvas</h1>
     <canvas id="canvas" width="800" height="600"></canvas>
 
-    <script src="main.js"></script>
-    <script src="canvas.js"></script>
+    <div>
+        <button onclick="update_draw_stat(this)" id="draw_btn"><img src="../.resources/items/draw.svg" alt="draw" height="20px" width="20px"></button>
+
+        <!-- Choose Brush -->
+        <label for="brushes"></label>
+        <select name="brushes" id="brush_picker">
+            <option value="normal">Normal</option>
+            <option value="sketchy">Sketch</option>
+            <option value="calligraphy">Calligraphy</option>
+            <option value="marker">Marker</option>
+            <option value="spray">Spray</option>
+            <option value="fur">Fur</option>
+        </select> 
+
+        <!-- Color picker -->
+        <input type="color" id="stroke_color_picker" value="#000000">
+
+        <input type="range" id="stroke_size" name="stroke_solider" min="3" max="15" />
+        <button onclick="clearCanvas()" id="clear_btn"><img src="../.resources/items/dustbin.svg" alt="draw" height="20px" width="20px" ></button>
+    </div>
+
+    <script src="main.js" ></script>
+    <script  type="module" src="canvas.js" ></script>
 </body>
 </html>

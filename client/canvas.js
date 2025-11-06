@@ -1,14 +1,49 @@
+import {drawNormal, drawCalligraphy, drawFur, drawMarker, drawSketchy, drawSpray} from '../.resources/utils/brush.js';
+
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-draw_status = false
-w = canvas.width;
-h = canvas.height;
-color = 'black'
-size = 4
+var draw_btn_status = false;
+var draw_status = false
+var w = canvas.width;
+var h = canvas.height;
 // coordinates
-prevX = 0, currX = 0, prevY = 0, currY = 0;
+var prevX = 0, currX = 0, prevY = 0, currY = 0;
 
+// Stroke size selection
+const strkSizeSlider = document.getElementById('stroke_size')
+var size = strkSizeSlider.value
+
+strkSizeSlider.addEventListener('input', () => {
+    size = strkSizeSlider.value
+})
+
+// Color picker
+const colorPicker = document.getElementById('stroke_color_picker')
+var color = colorPicker.value
+
+colorPicker.addEventListener('change', (e)=>{
+    color = e.target.value;
+})
+
+// Brush selection
+
+const brushPicker = document.getElementById('brush_picker')
+var brushType = brushPicker.value
+
+brushPicker.addEventListener('change', (e)=>{
+    brushType = e.target.value;
+})
+
+function update_draw_stat(e){
+    if(draw_btn_status){
+        draw_btn_status = false
+        e.classList.remove('draw_toggle_indication');
+    }else{
+        draw_btn_status = true
+        e.classList.add('draw_toggle_indication');
+    }
+}
 
 function init_Canvas(){
     canvas.addEventListener('mousemove', e => {
@@ -26,17 +61,36 @@ function init_Canvas(){
 }
 
 function draw(){
-    ctx.beginPath();
-    ctx.moveTo(prevX, prevY);
-    ctx.lineTo(currX, currY)
-    ctx.strokeStyle = color;
-    ctx.lineWidth   = size;
-    ctx.stroke();
-    ctx.closePath();
+    switch(brushType) {
+        case 'normal':
+            drawNormal(size, prevX, prevY, currX, currY, color)
+            break;
+        case 'spray':
+            drawSpray (size, prevX, prevY, currX, currY, color);
+            break;
+        case 'calligraphy':
+            drawCalligraphy (size, prevX, prevY, currX, currY, color);
+            break;
+        case 'sketchy':
+            drawSketchy (size, prevX, prevY, currX, currY, color);
+            break;
+        case 'marker':
+            drawMarker (size, prevX, prevY, currX, currY, color);
+            break;
+        case 'fur':
+            drawFur (size, prevX, prevY, currX, currY, color);
+            break;
+        default:
+            drawNormal(size, prevX, prevY, currX, currY, color);
+    }
+}
+
+function clearCanvas() {
+    ctx.clearRect(0, 0, w, h);
 }
 
 function update_coords(mouse_state, e){
-    if(mouse_state == 'down'){
+    if(mouse_state == 'down' && draw_btn_status){
         draw_status = true
 
         prevX = currX
@@ -47,12 +101,12 @@ function update_coords(mouse_state, e){
 
         // dot at the current location
         ctx.beginPath();
-        ctx.fillStyle = x;
+        ctx.fillStyle = color;
         ctx.fillRect(currX, currY, 4, 4);
         ctx.closePath();
     }
     
-    if(mouse_state == 'move'){
+    if(mouse_state == 'move' && draw_btn_status){
         if (draw_status){
             prevX = currX;
             prevY = currY;
@@ -67,3 +121,10 @@ function update_coords(mouse_state, e){
     }
 
 }
+
+
+// --- expose functions to HTML ---
+window.init_Canvas = init_Canvas;
+window.clearCanvas = clearCanvas;
+window.update_coords = update_coords;
+window.update_draw_stat = update_draw_stat;
