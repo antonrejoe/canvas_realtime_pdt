@@ -5,11 +5,19 @@ const io = require('socket.io')(3000,{
     },
 });
 
+// state assignment logic
+
+const userUndoStack = new Map()
+const userRedoStack = new Map()
+const {drawing_state_update, undo, redo} = require('./drawing-state')
+
 // Assigning color to user
 
 const assignedColors = new Set()
 const userColors     = new Map()
 let   drawStrokes    = []
+
+// utility functions
 
 function getRandomColor(){
     const letters = '0123456789ABCDEF';
@@ -76,6 +84,10 @@ io.on("connection", socket =>{
         assignedColors.delete(color)
         userColors.delete(socket.id)
 
+        // clean up stacks here to free memory
+        userUndoStack.delete(socket.id);
+        userRedoStack.delete(socket.id);
+
         socket.broadcast.emit('user-left', {
             userId: socket.id
         })
@@ -84,6 +96,8 @@ io.on("connection", socket =>{
 
     socket.on('drawing_event', data => {
         drawStrokes.push(data)
+        // 
+        drawing_state_update(data, userUndoStack, userRedoStack, socket);
 
         socket.broadcast.emit('drawing_from_other_user', {
             item : data
@@ -91,15 +105,33 @@ io.on("connection", socket =>{
     } )
 
     socket.on('clear_user_drawing', () => {
-        console.log(socket.id, 'user cleared his canvas')
+        console.log(socket.id, 'user cleared his canvas') // so only that will be removed globally
 
         drawStrokes = drawStrokes.filter(stroke => {
-            stroke.userId !== socket.id
+            return stroke.userId !== socket.id
         })
 
-        socket.broadcast.emit('redraw_canvas', drawStrokes)
+        // Reset user's undo and redo stacks
+        userUndoStack.set(socket.id, []);
+        userRedoStack.set(socket.id, []);
+
+
+        io.emit('redraw_canvas', drawStrokes) // io -> means emits to all client including the clearing user
+    })
+
+
+    // state management
+
+    socket.on('undo', () => {
+        undo(userUndoStack, userRedoStack, drawStrokes, socket)
+        io.emit('redraw_canvas', drawStrokes)
+    })
+
+
+    socket.on('redo', () => {
+        redo(userUndoStack, userRedoStack, drawStrokes, socket)
+        io.emit('redraw_canvas', drawStrokes)
     })
 
 
 })
-

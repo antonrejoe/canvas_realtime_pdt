@@ -96,4 +96,17 @@ socket.on('redraw_canvas', allStrokes =>{
     });
 })
 
+
+function undo(e){
+    socket.emit('undo')    
+}
+
+function redo(e){
+    socket.emit('redo')    
+
+}
+
 export default socket;
+
+window.undo = undo;
+window.redo = redo;
