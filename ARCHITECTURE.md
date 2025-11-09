@@ -72,6 +72,73 @@ Update room list → Others see new user
 ```
 
 
+## WebSocket Protocol
+
+**Message Design:**
+All major collaborative operations are communicated through defined WebSocket (Socket.io) events:
+
+- **Drawing Events:**
+    - `drawing_event` (client → server): Contains encoded stroke data (user, color, brush, coordinates, etc.).
+    - `drawing_from_other_user` (server → client): Broadcasts new strokes to room participants.
+- **Cursor Tracking:**
+    - `client_mouse_coordinates` (client → server): Sends (x, y) cursor data.
+    - `other_user_coordinates` (server → client): Forwards user position, color, and ID to room.
+- **Room Management:**
+    - `create-room`, `join-room`, `leave-room` (client ↔ server): Handles room lifecycle and membership.
+    - `room-list`, `user-joined`, `user-left` (server → client): Synchronizes available rooms and user presence.
+- **State Synchronization:**
+    - `canvas-state`, `redraw_canvas`: Ensures all users have the current room’s strokes and drawing state.
+- **Undo/Redo (Control Events):**
+    - `undo`, `redo` (client → server): Requests operation.
+    - `redraw_canvas` (server → client): Updates all clients with the resulting canvas state after the operation.
+
+**Each event clearly defines sender, payload, and intended receiver effect.**
+
+ 
+
+## Undo/Redo Strategy
+
+**Approach:**
+
+- Every room maintains per-user undo and redo stacks held in the server’s memory.
+- When a user draws, their stroke is pushed onto their undo stack.
+- **Undo Event:**
+    - When “undo” is triggered, the backend removes a configurable number of the user's most recent strokes from the canvas state and moves those to their redo stack.
+    - The server then emits a `redraw_canvas` event to this room with the updated stroke state, so all users see the revision.
+- **Redo Event:**
+    - “Redo” pulls strokes back from the redo stack to the active canvas and again triggers `redraw_canvas`.
+- All actions are indexed and handled per user for granularity.
+- **Edge Cases:**
+    - If a user leaves, their undo/redo stacks are cleaned up.
+    - Undo operations affect only the strokes owned by the requesting user.
+
+ 
+
+## Performance Decisions
+
+**Key Optimizations:**
+
+- Chose in-memory JavaScript Maps/Sets for ultra-fast access (sub-ms lookup).
+- Batched broadcast communication per room only, avoiding unnecessary global emits.
+- Minimally-encoded drawing data using MessagePack (significantly reducing payload sizes).
+- All state synchronization happens with explicit events; no polling.
+- Limited number of undo/redo operations retained per user to manage memory.
+- Used ES6 modules and modern syntax for better browser/server performance.
+
+ 
+
+## Conflict Resolution
+
+**Concurrency Handling:**
+All incoming events are processed and applied on the server in receive order (FIFO), which becomes the global ordering. No locks are required since the server is single-threaded per process; application of overlapping or simultaneous strokes is resolved visually by render order (last-wins as drawn on canvas).
+
+**Simultaneous Drawing:**
+If multiple users draw at the same instant, the server receives and rebroadcasts those events immediately; each client renders updates in the order received from the server, which reflects their occurrence in the global event stream.
+
+**Edge Cases:**
+If events from different users arrive at nearly the same time, they may be rendered on each client in slightly different orders, but the subsequent `redraw_canvas` state ensures everyone will sync up after any undo, redo, or clear operation.
+
+
 ---
 
 ## 📈 Scalability Roadmap
