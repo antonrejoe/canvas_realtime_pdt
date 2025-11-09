@@ -26,7 +26,9 @@ The client is built with HTML5 canvas and JavaScript supporting both mouse and t
 ***
 
 ## Prototype
-  [demo.webm](https://github.com/user-attachments/assets/620481fb-190e-4aa2-a4e0-b744099f3937)
+
+[demo.mp4](https://github.com/user-attachments/assets/67f4e13a-23ca-4a12-abd9-993114cf806e)
+
 
 ## Features
 
