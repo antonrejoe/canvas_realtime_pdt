@@ -10,47 +10,56 @@ function drawing_state_update(stroke, undoStk, redoStk, socket){
 
 }
 
-function undo(undoStk, redoStk, drawStrokes, socket){
-    const userUndoStk = undoStk.get(socket.id)
-    const userRedoStk = redoStk.get(socket.id)
+function undo(undoStk, redoStk, drawStrokes, socket, n = 5) { // n strokes to be removed at a time
+    const userUndoStk = undoStk.get(socket.id);
+    const userRedoStk = redoStk.get(socket.id);
 
-    if(!userUndoStk || userUndoStk.length === 0) return;
+    if (!userUndoStk || userUndoStk.length === 0) return;
 
-    const lastStroke = userUndoStk.pop();
+    // Remove up to n strokes
+    let strokesToUndo = [];
+    for (let i = 0; i < n; i++) {
+        const lastStroke = userUndoStk.pop();
+        if (!lastStroke) break;
+        strokesToUndo.push(lastStroke);
+    }
 
-    if(lastStroke){
-        
-        const index = drawStrokes.findIndex(s => s === lastStroke);
+    // Remove these strokes from drawStrokes
+    strokesToUndo.forEach(stroke => {
+        const index = drawStrokes.findIndex(s => s === stroke);
         if (index !== -1) {
             drawStrokes.splice(index, 1);
-        } // removal of the last stroke
+        }
+    });
 
-    }
-
-    userRedoStk.push(lastStroke)
-    redoStk.set(socket.id, userRedoStk)
-
+    // Push all undone strokes to redo stack
+    strokesToUndo.forEach(stroke => userRedoStk.push(stroke));
+    redoStk.set(socket.id, userRedoStk);
 }
 
+function redo(undoStk, redoStk, drawStrokes, socket, n = 5) {
+    const userUndoStk = undoStk.get(socket.id);
+    const userRedoStk = redoStk.get(socket.id);
 
-function redo(undoStk, redoStk, drawStrokes, socket){
-    const userUndoStk = undoStk.get(socket.id)
-    const userRedoStk = redoStk.get(socket.id)
+    if (!userRedoStk || userRedoStk.length === 0) return;
 
-    if(!userRedoStk || userRedoStk.length === 0) return;
-
-    const redoStroke = userRedoStk.pop()
-
-    if(redoStroke){
-        drawStrokes.push(redoStroke)
-        userUndoStk.push(redoStroke)
-
-        undoStk.set(socket.id, userUndoStk)
-        redoStk.set(socket.id, userRedoStk)
+    // Redo up to n strokes
+    let strokesToRedo = [];
+    for (let i = 0; i < n; i++) {
+        const redoStroke = userRedoStk.pop();
+        if (!redoStroke) break;
+        strokesToRedo.push(redoStroke);
     }
 
-}
+    // Add strokes back to drawStrokes and undo stack
+    strokesToRedo.forEach(stroke => {
+        drawStrokes.push(stroke);
+        userUndoStk.push(stroke);
+    });
 
+    undoStk.set(socket.id, userUndoStk);
+    redoStk.set(socket.id, userRedoStk);
+}
 
 
 module.exports = {

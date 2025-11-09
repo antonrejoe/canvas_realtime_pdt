@@ -2,46 +2,60 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canvas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Collaborative Drawing - Room Based</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body onload="init_Canvas()">
+    
+    <!-- Cursor follower -->
     <div id="follower"></div>
 
-    <h1>Interactive Canvas</h1>
-    <div>
-        <button onclick="undo(this)" id="undo_btn">undo</button>
-        <button onclick="redo(this)" id="redo_btn">redo</button>
+    <!-- Room controls will be dynamically inserted here by websocket.js -->
+
+    <!-- Drawing controls -->
+    <div class="controls-container">
+        <div class="control-group">
+            <label for="stroke_size">Stroke Size:</label>
+            <input type="range" id="stroke_size" min="1" max="50" value="5">
+        </div>
+
+        <div class="control-group">
+            <label for="stroke_color_picker">Color:</label>
+            <input type="color" id="stroke_color_picker" value="#000000">
+        </div>
+
+        <div class="control-group">
+            <label for="brush_picker">Brush:</label>
+            <select id="brush_picker">
+                <option value="normal">Normal</option>
+                <option value="spray">Spray</option>
+                <option value="calligraphy">Calligraphy</option>
+                <option value="sketchy">Sketchy</option>
+                <option value="marker">Marker</option>
+                <option value="fur">Fur</option>
+            </select>
+        </div>
+
+        <div class="button-group">
+            <button onclick="update_draw_stat(this)" class="draw-toggle">Toggle Draw</button>
+            <button onclick="eraser_on(this)" class="eraser-toggle">Eraser</button>
+            <button onclick="undo()" class="undo-btn">Undo</button>
+            <button onclick="redo()" class="redo-btn">Redo</button>
+            <button onclick="clearCanvas()" id="clear_btn" class="clear-btn">Clear My Drawing</button>
+        </div>
     </div>
+
+    <!-- Canvas -->
     <canvas id="canvas" width="800" height="600"></canvas>
 
-    <div>
-        <button onclick="update_draw_stat(this)" id="draw_btn"><img src="../.resources/items/draw.svg" alt="draw" height="20px" width="20px"></button>
-
-        <!-- Color picker -->
-        <input type="color" id="stroke_color_picker" value="#000000">
-
-        <button onclick="eraser_on(this)" id="erase_btn"><img src="../.resources/items/eraser.svg" alt="erase" height="20px" width="20px"></button>
-
-        <!-- Choose Brush -->
-        <label for="brushes"></label>
-        <select name="brushes" id="brush_picker">
-            <option value="normal">Normal</option>
-            <option value="sketchy">Sketch</option>
-            <option value="calligraphy">Calligraphy</option>
-            <option value="marker">Marker</option>
-            <option value="spray">Spray</option>
-            <option value="fur">Fur</option>
-        </select> 
-
-
-        <input type="range" id="stroke_size" name="stroke_solider" min="3" max="15" />
-        <button onclick="clearCanvas()" id="clear_btn"><img src="../.resources/items/dustbin.svg" alt="draw" height="20px" width="20px" ></button>
+    <!-- Info text for mobile -->
+    <div class="mobile-info">
+        <p id="mobile-hint">💡 Tip: Use your finger to draw on the canvas</p>
     </div>
 
-    <script src="main.js" ></script>
-    <script type="module" src="websocket.js" ></script>
-    <script  type="module" src="canvas.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/msgpack-lite/0.1.26/msgpack.min.js"></script>
+    <script type="module" src="websocket.js"></script>
+    <script type="module" src="canvas.js"></script>
 </body>
 </html>
