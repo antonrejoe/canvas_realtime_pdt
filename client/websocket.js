@@ -1,7 +1,7 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
 import { draw, ctx, w, h } from './canvas.js'
 
-const socket = io('http://localhost:3000')
+const socket = io('https://canvas-realtime-pdt.onrender.com')
 
 const userCursors = new Map();
 let currentRoomId = null;
