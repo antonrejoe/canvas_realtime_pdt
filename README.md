@@ -8,6 +8,7 @@ A real-time collaborative drawing platform enabling multiple users to create and
 ## Table of Contents
 
 - [Introduction](#introduction)
+- [Prototype](#prototype)
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -21,6 +22,9 @@ This application allows multiple users to draw together simultaneously in isolat
 The client is built with HTML5 canvas and JavaScript supporting both mouse and touch inputs, making it mobile-friendly.
 
 ***
+
+## Prototype
+  [demo.webm](https://github.com/user-attachments/assets/620481fb-190e-4aa2-a4e0-b744099f3937)
 
 ## Features
 
