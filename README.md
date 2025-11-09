@@ -14,6 +14,8 @@ A real-time collaborative drawing platform enabling multiple users to create and
 - [Usage](#usage)
 - [Architecture](#architecture)
 - [Technologies](#technologies)
+- [Limitations](#limitations)
+- [Timeline](#timeline)
 
 ## Introduction
 
@@ -82,3 +84,20 @@ node server.js
 - JavaScript ES6 modules
 - MessagePack for binary encoding
 - Responsive CSS for cross-device support
+
+## Limitations
+- No persistent storage
+- Single Server Architecture
+- No User Authentication
+- No Room Password protection
+- No Drawing history export
+- No Rate limiting or Flood protection
+- No Advanced drawing tools
+
+## Timeline
+- Day 1 - Basic UI and research on the Canvas API and Socket.io for real-time communication.
+- Day 2 - Implementation of drawing tools using advanced stroke manipulation.
+- Day 3 - Enabled multi-user synchronization of cursor coordinates and drawing strokes via Socket.io (without persistent state management).
+- Day 4 - Added user synchronization and robust state management for consistent drawing sessions.
+- Day 5 - Introduced room-based collaboration, mobile support, improved styling, and deployed the application.
+
