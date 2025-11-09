@@ -2,6 +2,7 @@
   "dependencies": {
     "@msgpack/msgpack": "^3.1.2",
     "express": "^5.1.0",
+    "nodemon": "^3.1.10",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1"
   },
@@ -17,10 +18,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
-  "devDependencies": {
-    "nodemon": "^3.1.10",
-    "webpack": "^5.102.1",
-    "webpack-cli": "^6.0.1"
-  }
+  "type": "commonjs"
 }

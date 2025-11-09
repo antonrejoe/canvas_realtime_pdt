@@ -1,4 +1,4 @@
-import {drawNormal, drawCalligraphy, drawFur, drawMarker, drawSketchy, drawSpray} from '../.resources/utils/brush.js';
+import {drawNormal, drawCalligraphy, drawFur, drawMarker, drawSketchy, drawSpray} from './.resources/utils/brush.js';
 import socket from './websocket.js';
 
 const canvas = document.getElementById('canvas');

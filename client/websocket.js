@@ -1,5 +1,4 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js"
-import { drawNormal, drawCalligraphy, drawFur, drawMarker, drawSketchy, drawSpray } from '../.resources/utils/brush.js';
 import { draw, ctx, w, h } from './canvas.js'
 
 const socket = io('http://localhost:3000')
