@@ -5,6 +5,7 @@
 The **Collaborative Drawing Application** is a real-time multiplayer drawing platform built with **Node.js**, **Socket.io**, and **HTML5 Canvas**. It enables multiple users to create isolated rooms and draw together with real-time synchronization, cursor tracking, and collaborative features like undo/redo and multi-brush support.
 
 ## Project Architecture diagram
+<img width="971" height="641" alt="architecture" src="https://github.com/user-attachments/assets/2b01470e-dc22-482b-85ea-43c3739ca8a7" />
 
 
 ## 📁 Project Structure Overview
